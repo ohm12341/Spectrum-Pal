@@ -121,18 +121,78 @@ class _InGamePageState extends State<InGamePage> {
   }
 
   void checkMatch(String sourceEmoji, String targetEmoji) {
+    bool isCorrectMatch = false;
+
     for (var pair in emojiPairs) {
       if (pair.contains(sourceEmoji) && pair.contains(targetEmoji)) {
-        // Correct match
+        isCorrectMatch = true;
         setState(() {
           score += 10;
         });
-        return;
+        int debugscore = widget.level * 10;
+        print("Score after correct match: $score");
+        print("Score after correct match:() $debugscore");
+        if (score == widget.level * 10) {
+          print("Level complete condition met!");
+          showCompletionDialog();
+          return;
+        }
       }
     }
-    // Incorrect match
-    setState(() {
-      score -= 5;
-    });
+
+    if (!isCorrectMatch) {
+      setState(() {
+        score -= 5;
+      });
+      print("Score after incorrect match: $score");
+    }
+  }
+
+  void showCompletionDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Congratulations!'),
+        content: Text('You have completed the level.'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Close the dialog
+              startNextLevel();
+            },
+            child: Text('Continue'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void startNextLevel() {
+    if (widget.level < emojiPairs.length) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => InGamePage(level: widget.level + 1),
+        ),
+      );
+    } else {
+      // Game completed! You can navigate to a different page or show another dialog
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Game Completed!'),
+            content: const Text('You have completed all the levels!'),
+            actions: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Okay'),
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 }

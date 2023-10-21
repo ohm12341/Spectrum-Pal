@@ -29,7 +29,7 @@ class LevelSelectionPage extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => InGamePage(level: index)),
+                    builder: (context) => InGamePage(level: index + 1)),
               );
             },
             style: ElevatedButton.styleFrom(
